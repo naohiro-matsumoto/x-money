@@ -1,125 +1,1105 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI SNS Marketing Tool</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 20px; background-color: #f5f5f7; color: #1d1d1f; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 25px; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h1 { font-size: 24px; text-align: center; margin-bottom: 20px; }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
-        input[type="text"], input[type="password"], textarea { width: 100%; padding: 12px; border: 1px solid #d2d2d7; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
-        button { width: 100%; padding: 14px; background-color: #0071e3; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
-        button:active { background-color: #0077ed; opacity: 0.8; }
-        #output { margin-top: 20px; padding: 15px; background: #f0f0f2; border-radius: 10px; min-height: 100px; white-space: pre-wrap; font-size: 14px; color: #333; border: 1px solid #e5e5e7; }
-        .error { color: #ff3b30; font-weight: bold; }
-        .loading { color: #0071e3; text-align: center; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>X MONEY SUITE</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0c0c;
+  --s1: #161616;
+  --s2: #1e1e1e;
+  --s3: #262626;
+  --b1: #2e2e2e;
+  --b2: #3a3a3a;
+  --t1: #f0f0f0;
+  --t2: #999;
+  --t3: #555;
+  --or: #ff5500;
+  --or2: rgba(255,85,0,0.15);
+  --or3: rgba(255,85,0,0.3);
+  --bl: #3b8ef0;
+  --bl2: rgba(59,142,240,0.15);
+  --gr: #22c55e;
+  --gr2: rgba(34,197,94,0.15);
+  --ye: #f0b429;
+  --ye2: rgba(240,180,41,0.15);
+  --pu: #a78bfa;
+  --pu2: rgba(167,139,250,0.15);
+  --nav: 64px;
+  --top: 58px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow-x:hidden}
+body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:15px;line-height:1.5}
+
+/* TOPBAR */
+.topbar{
+position:fixed;top:0;left:0;right:0;height:var(–top);
+background:var(–s1);border-bottom:1px solid var(–b1);
+display:flex;align-items:center;padding:0 14px;gap:10px;z-index:999;
+}
+.logo{font-size:20px;font-weight:900;color:var(–or);flex-shrink:0;letter-spacing:-1px}
+.api-row{
+flex:1;display:flex;align-items:center;gap:8px;
+background:var(–s2);border:1.5px solid var(–b1);border-radius:10px;padding:8px 12px;
+transition:border-color .2s;
+}
+.api-row:focus-within{border-color:var(–bl)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(–t3);flex-shrink:0;transition:background .3s,box-shadow .3s}
+.dot.ok{background:var(–gr);box-shadow:0 0 8px var(–gr)}
+.api-inp{
+flex:1;background:transparent;border:none;outline:none;
+color:var(–t1);font-family:‘JetBrains Mono’,monospace;font-size:11px;min-width:0;
+}
+.api-inp::placeholder{color:var(–t3)}
+
+/* CONTENT */
+.page{margin-top:var(–top);margin-bottom:var(–nav);padding:16px;min-height:calc(100vh - var(–top) - var(–nav))}
+
+/* PANELS */
+.panel{display:none}
+.panel.on{display:block;animation:up .2s ease}
+@keyframes up{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* BOTTOM NAV */
+.bnav{
+position:fixed;bottom:0;left:0;right:0;height:var(–nav);
+background:var(–s1);border-top:1px solid var(–b1);
+display:flex;z-index:999;
+padding-bottom:env(safe-area-inset-bottom);
+}
+.bnav-btn{
+flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+gap:3px;border:none;background:transparent;color:var(–t3);
+font-family:‘Outfit’,sans-serif;font-size:10px;font-weight:600;
+cursor:pointer;position:relative;padding-top:6px;
+transition:color .15s;
+}
+.bnav-btn.on{color:var(–or)}
+.bnav-btn.on::after{
+content:’’;position:absolute;top:0;left:25%;right:25%;
+height:2px;background:var(–or);border-radius:0 0 2px 2px;
+}
+.bnav-ico{font-size:20px;line-height:1}
+
+/* SUB TABS */
+.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.tab{
+padding:8px 16px;border-radius:100px;border:1.5px solid var(–b1);
+background:var(–s2);color:var(–t2);font-size:13px;font-weight:600;
+cursor:pointer;transition:all .15s;
+}
+.tab.on-o{background:var(–or2);border-color:var(–or);color:var(–or)}
+.tab.on-b{background:var(–bl2);border-color:var(–bl);color:var(–bl)}
+.tab.on-g{background:var(–gr2);border-color:var(–gr);color:var(–gr)}
+
+/* SECTION HEADER */
+.sh{margin-bottom:16px}
+.sh-t{font-size:21px;font-weight:800;letter-spacing:-.5px;margin-bottom:3px}
+.sh-d{font-size:12px;color:var(–t2)}
+
+/* CARD */
+.card{background:var(–s1);border:1px solid var(–b1);border-radius:14px;padding:16px;margin-bottom:12px}
+.card-t{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+
+/* FORM */
+.f{margin-bottom:12px}
+.fl{display:block;font-size:10px;font-weight:700;color:var(–t2);letter-spacing:1.2px;text-transform:uppercase;font-family:‘JetBrains Mono’,monospace;margin-bottom:6px}
+.fi,.fs{
+width:100%;background:var(–s2);border:1.5px solid var(–b1);border-radius:10px;
+padding:12px 14px;color:var(–t1);font-family:‘Outfit’,sans-serif;font-size:14px;
+outline:none;transition:border-color .2s;-webkit-appearance:none;
+}
+.fi:focus,.fs:focus{border-color:var(–bl)}
+.fi::placeholder{color:var(–t3)}
+.fs{background-image:url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘12’ height=‘7’ viewBox=‘0 0 12 7’%3E%3Cpath d=‘M1 1l5 5 5-5’ stroke=’%23555’ stroke-width=‘1.5’ fill=‘none’ stroke-linecap=‘round’/%3E%3C/svg%3E”);background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
+.fs option{background:var(–s2)}
+
+/* TAGS GROUP */
+.tg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.tgi{
+padding:7px 14px;border-radius:100px;border:1.5px solid var(–b1);
+background:var(–s2);color:var(–t2);font-size:12px;font-weight:600;
+cursor:pointer;user-select:none;transition:all .15s;
+}
+.tgi.ao{background:var(–or2);border-color:var(–or);color:var(–or)}
+.tgi.ab{background:var(–bl2);border-color:var(–bl);color:var(–bl)}
+.tgi.ag{background:var(–gr2);border-color:var(–gr);color:var(–gr)}
+
+/* BUTTON */
+.btn{
+display:flex;align-items:center;justify-content:center;gap:8px;
+width:100%;padding:14px;border-radius:12px;border:none;
+font-family:‘Outfit’,sans-serif;font-size:15px;font-weight:700;
+cursor:pointer;transition:all .15s;
+}
+.btn-p{background:var(–or);color:#fff}
+.btn-p:active{transform:scale(.98);background:#e04d00}
+.btn-p:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn-g{background:transparent;border:1.5px solid var(–b1);color:var(–t2);width:auto;padding:8px 14px;font-size:12px;border-radius:8px}
+.btn-g:active{background:var(–s2)}
+
+/* LOADER */
+.ld{display:none;align-items:center;gap:12px;background:var(–s1);border:1px solid var(–b1);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.ld.on{display:flex}
+.sp{width:18px;height:18px;border:2px solid var(–b1);border-top-color:var(–or);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ld span{font-size:12px;color:var(–t2)}
+.ld span b{color:var(–or)}
+
+/* ERROR */
+.eb{display:none;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:12px 14px;font-size:12px;color:#f87171;margin-bottom:12px;line-height:1.6;white-space:pre-wrap}
+.eb.on{display:block}
+
+/* SUMMARY STRIP */
+.sum{background:var(–s2);border-left:3px solid var(–or);border-radius:0 10px 10px 0;padding:12px 14px;margin-bottom:16px}
+.sum-k{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(–or);font-family:‘JetBrains Mono’,monospace;margin-bottom:5px}
+.sum-t{font-size:12px;color:var(–t2);line-height:1.7}
+
+/* RESULT CARDS */
+.rc{background:var(–s1);border:1px solid var(–b1);border-radius:14px;padding:16px;margin-bottom:10px;animation:up .3s ease both}
+.rc:nth-child(2){animation-delay:.05s}
+.rc:nth-child(3){animation-delay:.1s}
+.rc:nth-child(4){animation-delay:.15s}
+.rc:nth-child(5){animation-delay:.2s}
+
+/* ACCOUNT CARD */
+.act{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(–or),var(–pu));display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;flex-shrink:0}
+.an{font-size:14px;font-weight:700}
+.ah{font-size:11px;color:var(–t3);font-family:‘JetBrains Mono’,monospace}
+.pill{flex-shrink:0;font-size:10px;padding:3px 9px;border-radius:100px;font-family:‘JetBrains Mono’,monospace;font-weight:500}
+.pill-y{background:var(–ye2);color:var(–ye);border:1px solid rgba(240,180,41,.3)}
+.pill-r{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.3)}
+.ad{font-size:12px;color:var(–t2);line-height:1.6;margin-bottom:10px}
+.am{display:grid;grid-template-columns:repeat(3,1fr);padding:10px 0;border-top:1px solid var(–b1);border-bottom:1px solid var(–b1);margin-bottom:10px}
+.av2{text-align:center}
+.av2-v{font-size:14px;font-weight:700}
+.av2-k{font-size:9px;color:var(–t3);text-transform:uppercase;letter-spacing:.8px}
+.at{background:var(–ye2);border:1px solid rgba(240,180,41,.2);border-radius:8px;padding:10px 12px}
+.at b{display:block;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(–ye);margin-bottom:3px}
+.at p{font-size:11px;color:#c49a20;line-height:1.5}
+
+/* POST CARD */
+.pt{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.pn{font-size:32px;font-weight:900;color:var(–b2);line-height:1;width:36px;flex-shrink:0}
+.pt-t{font-size:15px;font-weight:700;margin-bottom:3px}
+.pt-b{font-size:11px;color:var(–t3);font-family:‘JetBrains Mono’,monospace}
+.bdg{padding:4px 9px;border-radius:6px;font-size:10px;letter-spacing:1px;text-transform:uppercase;font-family:‘JetBrains Mono’,monospace}
+.bdg-t{background:var(–pu2);color:var(–pu);border:1px solid rgba(167,139,250,.3)}
+.bdg-s{background:var(–gr2);color:var(–gr);border:1px solid rgba(34,197,94,.3)}
+.bdg-p{background:var(–bl2);color:var(–bl);border:1px solid rgba(59,142,240,.3)}
+.hk{background:var(–s2);border-left:3px solid var(–bl);padding:10px 12px;border-radius:0 8px 8px 0;font-size:13px;line-height:1.6;font-style:italic;margin-bottom:12px}
+.ps{display:flex;gap:16px;margin-bottom:12px}
+.ps-i{font-size:12px;color:var(–t2);display:flex;align-items:center;gap:5px}
+.pb{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mb{padding:10px;border-radius:8px}
+.mb-g{background:var(–gr2);border:1px solid rgba(34,197,94,.2)}
+.mb-o{background:var(–or2);border:1px solid var(–or3)}
+.mb-k{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:4px;font-family:‘JetBrains Mono’,monospace}
+.mb-g .mb-k{color:var(–gr)}
+.mb-o .mb-k{color:var(–or)}
+.mb p{font-size:11px;color:var(–t2);line-height:1.5}
+
+/* GEN CARD */
+.gc{background:var(–s1);border:1px solid var(–b1);border-radius:14px;overflow:hidden;margin-bottom:10px;animation:up .3s ease both}
+.gc:nth-child(2){animation-delay:.06s}
+.gc:nth-child(3){animation-delay:.12s}
+.gc:nth-child(4){animation-delay:.18s}
+.gc-h{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(–s2);border-bottom:1px solid var(–b1)}
+.gc-l{font-size:13px;font-weight:700}
+.gc-b{padding:14px;font-size:13px;line-height:1.9;white-space:pre-wrap}
+
+/* LINE CARD */
+.lc{background:var(–s1);border:1px solid var(–b1);border-radius:14px;overflow:hidden;margin-bottom:10px;animation:up .3s ease both}
+.lc-h{padding:12px 14px;background:var(–gr2);border-bottom:1px solid rgba(34,197,94,.15)}
+.lc-s{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(–gr);font-family:‘JetBrains Mono’,monospace;margin-bottom:3px}
+.lc-t{font-size:13px;font-weight:700}
+.lc-b{padding:14px;font-size:13px;line-height:1.9;color:var(–t2);white-space:pre-wrap;border-bottom:1px solid var(–b1)}
+.lc-f{padding:10px 14px;display:flex;justify-content:flex-end}
+
+/* AFFIL CARD */
+.afc{background:var(–s1);border:1px solid var(–b1);border-radius:14px;padding:16px;margin-bottom:10px;animation:up .3s ease both}
+.af-n{font-size:18px;font-weight:800;letter-spacing:-.3px;margin-bottom:2px}
+.af-a{font-size:11px;color:var(–t3);font-family:‘JetBrains Mono’,monospace;margin-bottom:10px}
+.af-p{font-size:28px;font-weight:900;color:var(–or);letter-spacing:-1px;margin-bottom:2px}
+.af-i{font-size:12px;color:var(–t2);margin-bottom:12px}
+.af-l{list-style:none;margin-bottom:12px}
+.af-l li{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(–b1);font-size:12px;color:var(–t2)}
+.af-l li:last-child{border:none}
+.af-l li span{color:var(–gr);font-weight:700;font-family:‘JetBrains Mono’,monospace;font-size:11px}
+.af-tip{background:var(–ye2);border:1px solid rgba(240,180,41,.2);border-radius:8px;padding:10px 12px;font-size:11px;color:#c49a20;line-height:1.5}
+
+/* SIMULATOR */
+.sim-box{background:var(–s2);border:1px solid var(–b1);border-radius:14px;padding:20px;text-align:center;margin-bottom:12px}
+.sim-v{font-size:48px;font-weight:900;letter-spacing:-2px;line-height:1;transition:color .3s}
+.sim-v span{font-size:20px;color:var(–t2);font-weight:400}
+.sim-i{font-size:11px;color:var(–t3);line-height:1.9;margin-top:10px;white-space:pre-line}
+.slw{margin-bottom:14px}
+.slr{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.sl-l{font-size:13px;font-weight:600}
+.sl-v{font-size:14px;font-weight:700;color:var(–or);font-family:‘JetBrains Mono’,monospace}
+input[type=range]{width:100%;-webkit-appearance:none;height:4px;background:var(–b1);border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(–or);cursor:pointer;box-shadow:0 0 8px var(–or3)}
+
+/* DASHBOARD */
+.kpi-g{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.kpi{background:var(–s1);border:1px solid var(–b1);border-radius:14px;padding:14px}
+.kpi-ico{font-size:20px;margin-bottom:6px}
+.kpi-v{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:2px}
+.kpi-l{font-size:10px;color:var(–t2)}
+.kpi-n{font-size:10px;color:var(–gr);margin-top:4px}
+
+.road{list-style:none}
+.road-i{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(–b1)}
+.road-i:last-child{border:none}
+.road-d{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.road-d.dn{background:var(–gr)}
+.road-d.nw{background:var(–or);box-shadow:0 0 8px var(–or)}
+.road-d.td{background:var(–b2)}
+.road-c{flex:1}
+.road-t{font-size:13px;font-weight:600;margin-bottom:2px}
+.road-s{font-size:11px;color:var(–t3)}
+.road-p{font-size:9px;padding:2px 8px;border-radius:100px;font-family:‘JetBrains Mono’,monospace;font-weight:500;white-space:nowrap;flex-shrink:0}
+.rp1{background:var(–bl2);color:var(–bl)}
+.rp2{background:var(–gr2);color:var(–gr)}
+.rp3{background:var(–or2);color:var(–or)}
+.rp4{background:var(–ye2);color:var(–ye)}
+
+/* PROFILE RESULT */
+.pr-s{padding:12px 0;border-bottom:1px solid var(–b1)}
+.pr-s:last-child{border:none}
+.pr-l{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(–t3);font-family:‘JetBrains Mono’,monospace;margin-bottom:6px}
+.pr-v{font-size:13px;line-height:1.7;white-space:pre-line}
+
+/* SPY */
+.spy-c{background:var(–s1);border:1px solid var(–b1);border-radius:14px;padding:16px;margin-bottom:10px;animation:up .3s ease both}
+.spy-w{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(–pu);font-family:‘JetBrains Mono’,monospace;margin-bottom:5px}
+.spy-t{font-size:15px;font-weight:700;margin-bottom:8px}
+.spy-m{display:flex;gap:14px;margin-bottom:10px}
+.spy-s{font-size:12px;color:var(–t2)}
+.spy-s b{color:var(–t1)}
+.spy-in{background:var(–pu2);border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(–pu);line-height:1.6}
+.spy-cp{background:var(–or2);border:1px solid var(–or3);border-radius:8px;padding:10px 12px;font-size:12px;color:var(–or);line-height:1.6;margin-top:8px}
+
+/* SCHEDULE */
+.sc-d{background:var(–s1);border:1px solid var(–b1);border-radius:12px;padding:14px;margin-bottom:8px}
+.sc-dn{font-size:12px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.sc-cnt{font-size:13px;font-weight:800;color:var(–or);font-family:‘JetBrains Mono’,monospace}
+.sc-sl{display:flex;flex-wrap:wrap;gap:6px}
+.sc-s{background:var(–or2);border:1px solid var(–or3);color:var(–or);font-size:11px;padding:4px 10px;border-radius:6px;font-family:‘JetBrains Mono’,monospace}
+
+/* GOAL BANNER */
+.goal-banner{
+background:linear-gradient(135deg,rgba(255,85,0,.12),rgba(255,85,0,.04));
+border:1px solid var(–or3);border-radius:14px;padding:18px;margin-bottom:12px;
+}
+.goal-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(–or);font-family:‘JetBrains Mono’,monospace;margin-bottom:6px}
+.goal-val{font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
+.goal-sub{font-size:12px;color:var(–t2)}
+
+hr.div{border:none;border-top:1px solid var(–b1);margin:14px 0}
+</style>
+
 </head>
 <body>
 
-<div class="container">
-    <h1>SNS専門家AI</h1>
+<!-- TOPBAR -->
 
-    <div class="input-group">
-        <label for="apiKey">Anthropic API Key</label>
-        <input type="password" id="apiKey" placeholder="sk-ant-api03-...">
-    </div>
-
-    <div class="input-group">
-        <label for="prompt">指示内容 (例: 新商品のプロモーション案)</label>
-        <textarea id="prompt" rows="4" placeholder="ここに具体的な指示を入力してください"></textarea>
-    </div>
-
-    <button id="runBtn">生成する</button>
-
-    <div id="output">結果がここに表示されます</div>
+<div class="topbar">
+  <div class="logo">X$</div>
+  <div class="api-row">
+    <div class="dot" id="dot"></div>
+    <input class="api-inp" type="password" id="api-inp"
+      placeholder="APIキーを貼り付け (sk-ant-...)"
+      oninput="setKey(this.value)"
+      autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+  </div>
 </div>
 
+<!-- PAGES -->
+
+<div class="page">
+
+  <!-- HOME -->
+
+  <div id="pg-home" class="panel on">
+    <div class="sh"><div class="sh-t">🏠 ダッシュボード</div><div class="sh-d">月500万円達成へのロードマップ</div></div>
+
+```
+<div class="goal-banner">
+  <div class="goal-label">GOAL</div>
+  <div class="goal-val">月500万円</div>
+  <div class="goal-sub">X → LINE → アフィリエイト 完全ファネル</div>
+</div>
+
+<div class="kpi-g">
+  <div class="kpi"><div class="kpi-ico">⚡</div><div class="kpi-v" id="kst" style="color:var(--or)">未設定</div><div class="kpi-l">APIキー状態</div></div>
+  <div class="kpi"><div class="kpi-ico">🛠️</div><div class="kpi-v">10機能</div><div class="kpi-l">搭載ツール数</div></div>
+  <div class="kpi"><div class="kpi-ico">🚀</div><div class="kpi-v">3ヶ月</div><div class="kpi-l">初収益目安</div><div class="kpi-n">初成約まで</div></div>
+  <div class="kpi"><div class="kpi-ico">💴</div><div class="kpi-v">高単価</div><div class="kpi-l">アフィリ方針</div><div class="kpi-n">1件1万円〜</div></div>
+</div>
+
+<div class="card">
+  <div class="card-t">🗺️ 月500万ロードマップ</div>
+  <ul class="road">
+    <li class="road-i"><div class="road-d nw"></div><div class="road-c"><div class="road-t">アカウント設計・プロフ最適化</div><div class="road-s">ジャンル決定・コンセプト・プロフ作成</div></div><div class="road-p rp1">WEEK1</div></li>
+    <li class="road-i"><div class="road-d td"></div><div class="road-c"><div class="road-t">コンテンツ量産・投稿習慣化</div><div class="road-s">バズ分析→生成→毎日2〜3本投稿</div></div><div class="road-p rp2">1ヶ月目</div></li>
+    <li class="road-i"><div class="road-d td"></div><div class="road-c"><div class="road-t">フォロワー1000人・LINE集客開始</div><div class="road-s">LINE公式・登録特典・誘導スタート</div></div><div class="road-p rp2">2ヶ月目</div></li>
+    <li class="road-i"><div class="road-d td"></div><div class="road-c"><div class="road-t">アフィリ収益化スタート</div><div class="road-s">ASP登録→高単価案件→LINEで販売</div></div><div class="road-p rp3">3ヶ月目</div></li>
+    <li class="road-i"><div class="road-d td"></div><div class="road-c"><div class="road-t">複数ジャンル展開・月100万突破</div><div class="road-s">勝ちパターン横展開・外注・自動化</div></div><div class="road-p rp4">4〜6ヶ月目</div></li>
+    <li class="road-i"><div class="road-d td"></div><div class="road-c"><div class="road-t">月500万安定達成</div><div class="road-s">LINE×アフィリ×自社商品で複線化</div></div><div class="road-p rp4">12ヶ月目</div></li>
+  </ul>
+</div>
+
+<div class="card">
+  <div class="card-t">✅ 今すぐやること</div>
+  <ul class="road">
+    <li class="road-i"><div class="road-d nw"></div><div class="road-c"><div class="road-t">① APIキーを上の入力欄に貼り付ける</div><div class="road-s">console.anthropic.com で取得・貼るだけ</div></div></li>
+    <li class="road-i"><div class="road-d td"></div><div class="road-c"><div class="road-t">② アカウント分析でジャンル決定</div><div class="road-s">「リサーチ」タブから開始</div></div></li>
+    <li class="road-i"><div class="road-d td"></div><div class="road-c"><div class="road-t">③ プロフィール最適化を実行</div><div class="road-s">「作成」タブ → プロフ最適化</div></div></li>
+    <li class="road-i"><div class="road-d td"></div><div class="road-c"><div class="road-t">④ 投稿を10本作り貯め</div><div class="road-s">「作成」タブ → 投稿ジェネレーター</div></div></li>
+    <li class="road-i"><div class="road-d td"></div><div class="road-c"><div class="road-t">⑤ LINE公式アカウントを作成</div><div class="road-s">無料プラン（月200通）でスタート</div></div></li>
+  </ul>
+</div>
+
+<div class="card" style="background:var(--s2);border-color:var(--b2)">
+  <div class="card-t" style="color:var(--ye)">⚠️ 使い方（重要）</div>
+  <p style="font-size:12px;color:var(--t2);line-height:1.8">このツールは <b style="color:var(--t1)">Safari / Chrome で直接開いて</b>使ってください。<br>Claudeアプリ内のプレビューでは外部API通信がブロックされるため動作しません。<br><br>📱 HTMLファイルをダウンロード → ファイルアプリ → Safariで開く</p>
+</div>
+```
+
+  </div>
+
+  <!-- RESEARCH -->
+
+  <div id="pg-research" class="panel">
+    <div class="tabs" id="rt">
+      <div class="tab on-b" onclick="rtab('acct')">📊 アカウント</div>
+      <div class="tab" onclick="rtab('posts')">🔥 バズ投稿</div>
+      <div class="tab" onclick="rtab('spy')">🕵️ 競合スパイ</div>
+    </div>
+
+```
+<div id="r-acct">
+  <div class="sh"><div class="sh-t">📊 アカウント分析</div><div class="sh-d">伸びているXアカウントを調査</div></div>
+  <div class="card">
+    <div class="tg" id="tg-acct">
+      <div class="tgi ao" data-v="AI・ChatGPT活用">AI・ChatGPT</div>
+      <div class="tgi" data-v="副業・収益化">副業・収益化</div>
+      <div class="tgi" data-v="X・SNS運用">SNS運用</div>
+      <div class="tgi" data-v="プログラミング">プログラミング</div>
+      <div class="tgi" data-v="起業・スタートアップ">起業</div>
+      <div class="tgi" data-v="投資・資産形成">投資</div>
+    </div>
+    <div class="f"><label class="fl">カスタムジャンル（任意）</label><input class="fi" id="acct-custom" placeholder="例：Notion活用、生成AI動画"></div>
+    <div class="f"><label class="fl">表示件数</label><select class="fs" id="acct-count"><option value="5">5件</option><option value="8" selected>8件</option><option value="10">10件</option></select></div>
+    <button class="btn btn-p" id="btn-acct" onclick="runAccounts()">🔍 リサーチ開始</button>
+  </div>
+  <div class="ld" id="ld-acct"><div class="sp"></div><span>Claude が <b>アカウントを調査中</b>...</span></div>
+  <div class="eb" id="er-acct"></div>
+  <div id="res-acct"></div>
+</div>
+
+<div id="r-posts" style="display:none">
+  <div class="sh"><div class="sh-t">🔥 バズ投稿分析</div><div class="sh-d">直近バズパターンを構造解析</div></div>
+  <div class="card">
+    <div class="f"><label class="fl">テーマ / キーワード</label><input class="fi" id="post-topic" placeholder="例：ChatGPT副業、AI画像生成"></div>
+    <div class="f"><label class="fl">期間</label><select class="fs" id="post-period"><option value="直近1週間">直近1週間</option><option value="直近2週間" selected>直近2週間</option><option value="直近1ヶ月">直近1ヶ月</option></select></div>
+    <div class="tg" id="tg-post">
+      <div class="tgi ab" data-v="スレッド・まとめ系">スレッド</div>
+      <div class="tgi" data-v="単発ポスト">単発ポスト</div>
+      <div class="tgi" data-v="保存率高め">保存率高め</div>
+      <div class="tgi" data-v="フォロワー獲得型">フォロワー獲得</div>
+    </div>
+    <button class="btn btn-p" id="btn-posts" onclick="runPosts()">🔍 バズ投稿を分析</button>
+  </div>
+  <div class="ld" id="ld-posts"><div class="sp"></div><span>Claude が <b>バズパターンを分析中</b>...</span></div>
+  <div class="eb" id="er-posts"></div>
+  <div id="res-posts"></div>
+</div>
+
+<div id="r-spy" style="display:none">
+  <div class="sh"><div class="sh-t">🕵️ 競合スパイ</div><div class="sh-d">特定アカウントを深掘り分析</div></div>
+  <div class="card">
+    <div class="f"><label class="fl">スパイするアカウント</label><input class="fi" id="spy-acct" placeholder="例：@AI副業, AIマーケター田中"></div>
+    <div class="f"><label class="fl">分析期間</label><select class="fs" id="spy-period"><option value="直近1週間">直近1週間</option><option value="直近1ヶ月" selected>直近1ヶ月</option><option value="直近3ヶ月">直近3ヶ月</option></select></div>
+    <button class="btn btn-p" id="btn-spy" onclick="runSpy()">🔍 スパイ開始</button>
+  </div>
+  <div class="ld" id="ld-spy"><div class="sp"></div><span>Claude が <b>アカウントを深掘り中</b>...</span></div>
+  <div class="eb" id="er-spy"></div>
+  <div id="res-spy"></div>
+</div>
+```
+
+  </div>
+
+  <!-- CREATE -->
+
+  <div id="pg-create" class="panel">
+    <div class="tabs" id="ct">
+      <div class="tab on-g" onclick="ctab('gen')">✍️ 投稿生成</div>
+      <div class="tab" onclick="ctab('prof')">👤 プロフ最適化</div>
+      <div class="tab" onclick="ctab('sched')">📅 スケジュール</div>
+    </div>
+
+```
+<div id="c-gen">
+  <div class="sh"><div class="sh-t">✍️ 投稿ジェネレーター</div><div class="sh-d">4パターンの投稿を即生成</div></div>
+  <div class="card">
+    <div class="f"><label class="fl">テーマ / コンセプト</label><input class="fi" id="gen-theme" placeholder="例：ChatGPTで月10万、AIツール5選"></div>
+    <div class="f"><label class="fl">あなたの立場</label><input class="fi" id="gen-persona" value="機械設計エンジニア"></div>
+    <div class="tg" id="tg-gen">
+      <div class="tgi ag" data-v="有益情報まとめ型">有益まとめ</div>
+      <div class="tgi" data-v="体験談ストーリー型">ストーリー</div>
+      <div class="tgi" data-v="問題提起共感型">問題提起</div>
+      <div class="tgi" data-v="ランキング比較型">ランキング</div>
+    </div>
+    <div class="f"><label class="fl">LINE誘導文（末尾に追加）</label>
+      <select class="fs" id="gen-line">
+        <option value="">なし</option>
+        <option value="詳細はLINEで解説中（プロフのリンクから）">詳細はLINEで解説中</option>
+        <option value="LINE登録で完全版を無料プレゼント中">LINE登録で完全版プレゼント</option>
+        <option value="LINEで個別相談受付中（プロフから）">LINEで個別相談受付</option>
+      </select>
+    </div>
+    <button class="btn btn-p" id="btn-gen" onclick="runGenerator()">⚡ 4パターン生成</button>
+  </div>
+  <div class="ld" id="ld-gen"><div class="sp"></div><span>Claude が <b>投稿を生成中</b>...</span></div>
+  <div class="eb" id="er-gen"></div>
+  <div id="res-gen"></div>
+</div>
+
+<div id="c-prof" style="display:none">
+  <div class="sh"><div class="sh-t">👤 プロフィール最適化</div><div class="sh-d">フォロワーが増えるプロフをAIが設計</div></div>
+  <div class="card">
+    <div class="f"><label class="fl">発信ジャンル</label><input class="fi" id="prof-genre" placeholder="例：AI副業・ChatGPT活用"></div>
+    <div class="f"><label class="fl">職業・実績</label><input class="fi" id="prof-career" placeholder="例：機械設計エンジニア10年"></div>
+    <div class="f"><label class="fl">ターゲット読者</label><input class="fi" id="prof-target" placeholder="例：副業したいサラリーマン"></div>
+    <div class="f"><label class="fl">LINE登録特典</label><input class="fi" id="prof-gift" placeholder="例：AI副業完全ガイドPDF無料"></div>
+    <button class="btn btn-p" id="btn-prof" onclick="runProfile()">✨ プロフを最適化</button>
+  </div>
+  <div class="ld" id="ld-prof"><div class="sp"></div><span>Claude が <b>プロフを設計中</b>...</span></div>
+  <div class="eb" id="er-prof"></div>
+  <div id="res-prof"></div>
+</div>
+
+<div id="c-sched" style="display:none">
+  <div class="sh"><div class="sh-t">📅 投稿スケジュール</div><div class="sh-d">最適な曜日・時間帯を提案</div></div>
+  <div class="card">
+    <div class="f"><label class="fl">発信ジャンル</label><input class="fi" id="sched-genre" placeholder="例：AI副業、ChatGPT活用"></div>
+    <div class="f"><label class="fl">1日の投稿本数</label><select class="fs" id="sched-cnt"><option value="1">1本</option><option value="2" selected>2本</option><option value="3">3本</option><option value="5">5本</option></select></div>
+    <button class="btn btn-p" id="btn-sched" onclick="runSchedule()">📅 スケジュール生成</button>
+  </div>
+  <div class="ld" id="ld-sched"><div class="sp"></div><span>Claude が <b>スケジュールを設計中</b>...</span></div>
+  <div class="eb" id="er-sched"></div>
+  <div id="res-sched"></div>
+</div>
+```
+
+  </div>
+
+  <!-- MONEY -->
+
+  <div id="pg-money" class="panel">
+    <div class="tabs" id="mt">
+      <div class="tab on-o" onclick="mtab('line')">💬 LINE</div>
+      <div class="tab" onclick="mtab('affil')">💰 アフィリ</div>
+      <div class="tab" onclick="mtab('sim')">📈 シミュレーター</div>
+    </div>
+
+```
+<div id="m-line">
+  <div class="sh"><div class="sh-t">💬 LINEシナリオ</div><div class="sh-d">Day1〜7の全メッセージを自動設計</div></div>
+  <div class="card">
+    <div class="f"><label class="fl">Xの発信ジャンル</label><input class="fi" id="line-genre" placeholder="例：AI副業、ChatGPT活用術"></div>
+    <div class="f"><label class="fl">最終的に案内する商材</label><input class="fi" id="line-product" placeholder="例：オンライン講座、FXスクール"></div>
+    <div class="tg" id="tg-line">
+      <div class="tgi ag" data-v="無料PDF">無料PDF</div>
+      <div class="tgi" data-v="無料動画講座">無料動画</div>
+      <div class="tgi" data-v="無料個別相談">無料相談</div>
+      <div class="tgi" data-v="無料テンプレート集">テンプレ集</div>
+    </div>
+    <button class="btn btn-p" id="btn-line" onclick="runLine()">💬 シナリオを設計</button>
+  </div>
+  <div class="ld" id="ld-line"><div class="sp"></div><span>Claude が <b>LINEシナリオを設計中</b>...</span></div>
+  <div class="eb" id="er-line"></div>
+  <div id="res-line"></div>
+</div>
+
+<div id="m-affil" style="display:none">
+  <div class="sh"><div class="sh-t">💰 アフィリエイト戦略</div><div class="sh-d">高単価案件と訴求戦略を提案</div></div>
+  <div class="card">
+    <div class="f"><label class="fl">ジャンル・ターゲット</label><input class="fi" id="affil-target" placeholder="例：副業に興味があるサラリーマン30代"></div>
+    <div class="f"><label class="fl">優先する単価帯</label>
+      <select class="fs" id="affil-price">
+        <option value="高単価（1件1万円以上）" selected>高単価（1万円〜）</option>
+        <option value="中単価（3000〜1万円）">中単価（3千〜1万）</option>
+        <option value="継続課金・定期報酬型">継続課金型</option>
+      </select>
+    </div>
+    <button class="btn btn-p" id="btn-affil" onclick="runAffiliate()">💰 戦略を生成</button>
+  </div>
+  <div class="ld" id="ld-affil"><div class="sp"></div><span>Claude が <b>アフィリ戦略を分析中</b>...</span></div>
+  <div class="eb" id="er-affil"></div>
+  <div id="res-affil"></div>
+</div>
+
+<div id="m-sim" style="display:none">
+  <div class="sh"><div class="sh-t">📈 収益シミュレーター</div><div class="sh-d">スライダーで月収をリアルタイム計算</div></div>
+  <div class="sim-box">
+    <div style="font-size:11px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">月間予測収益</div>
+    <div class="sim-v" id="sim-v"><span>¥</span>0</div>
+    <div class="sim-i" id="sim-i"></div>
+  </div>
+  <div class="card">
+    <div class="slw"><div class="slr"><span class="sl-l">👥 フォロワー数</span><span class="sl-v" id="sv1">1,000人</span></div><input type="range" id="sl1" min="100" max="50000" step="100" value="1000" oninput="calcSim()"></div>
+    <hr class="div">
+    <div class="slw"><div class="slr"><span class="sl-l">💬 LINE登録率</span><span class="sl-v" id="sv2">5%</span></div><input type="range" id="sl2" min="1" max="20" value="5" oninput="calcSim()"></div>
+    <hr class="div">
+    <div class="slw"><div class="slr"><span class="sl-l">🛒 LINE→成約率</span><span class="sl-v" id="sv3">3%</span></div><input type="range" id="sl3" min="1" max="20" value="3" oninput="calcSim()"></div>
+    <hr class="div">
+    <div class="slw"><div class="slr"><span class="sl-l">💴 平均報酬単価</span><span class="sl-v" id="sv4">¥30,000</span></div><input type="range" id="sl4" min="1000" max="200000" step="1000" value="30000" oninput="calcSim()"></div>
+    <hr class="div">
+    <div class="slw"><div class="slr"><span class="sl-l">📅 月間新規LINE獲得</span><span class="sl-v" id="sv5">50人</span></div><input type="range" id="sl5" min="10" max="2000" step="10" value="50" oninput="calcSim()"></div>
+  </div>
+</div>
+```
+
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+
+<nav class="bnav">
+  <button class="bnav-btn on" id="nb-home" onclick="goPage('home')"><div class="bnav-ico">🏠</div>ホーム</button>
+  <button class="bnav-btn" id="nb-research" onclick="goPage('research')"><div class="bnav-ico">🔍</div>リサーチ</button>
+  <button class="bnav-btn" id="nb-create" onclick="goPage('create')"><div class="bnav-ico">✍️</div>作成</button>
+  <button class="bnav-btn" id="nb-money" onclick="goPage('money')"><div class="bnav-ico">💰</div>収益化</button>
+</nav>
+
 <script>
-    const runBtn = document.getElementById('runBtn');
-    const output = document.getElementById('output');
+// ============================================================
+// STATE
+// ============================================================
+var apiKey = '';
 
-    runBtn.addEventListener('click', async () => {
-        const apiKey = document.getElementById('apiKey').value;
-        const prompt = document.getElementById('prompt').value;
+// ============================================================
+// API KEY
+// ============================================================
+function setKey(v) {
+  apiKey = (v || '').trim();
+  var ok = apiKey.length > 20;
+  document.getElementById('dot').className = 'dot' + (ok ? ' ok' : '');
+  document.getElementById('kst').textContent = ok ? '設定済み ✓' : '未設定';
+  document.getElementById('kst').style.color = ok ? 'var(--gr)' : 'var(--or)';
+}
 
-        if (!apiKey) {
-            alert('APIキーを入力してください');
-            return;
-        }
+// ============================================================
+// NAVIGATION
+// ============================================================
+var PAGES = ['home', 'research', 'create', 'money'];
 
-        output.innerHTML = '<div class="loading">AIが考え中...</div>';
-        runBtn.disabled = true;
+function goPage(p) {
+  PAGES.forEach(function(x) {
+    document.getElementById('pg-' + x).className = 'panel' + (x === p ? ' on' : '');
+    document.getElementById('nb-' + x).className = 'bnav-btn' + (x === p ? ' on' : '');
+  });
+  window.scrollTo(0, 0);
+}
 
-        try {
-            await callClaude(apiKey, prompt, (err, result) => {
-                if (err) {
-                    output.innerHTML = `<div class="error">エラー: ${err.message}</div>`;
-                } else {
-                    // JSONパースの試行
-                    try {
-                        const jsonResponse = JSON.parse(result);
-                        output.innerText = JSON.stringify(jsonResponse, null, 2);
-                    } catch (e) {
-                        output.innerText = result; // JSONでなければそのまま表示
-                    }
-                }
-                runBtn.disabled = false;
-            });
-        } catch (e) {
-            output.innerHTML = `<div class="error">システムエラーが発生しました</div>`;
-            runBtn.disabled = false;
-        }
+function rtab(t) {
+  ['acct','posts','spy'].forEach(function(x) {
+    document.getElementById('r-' + x).style.display = x === t ? 'block' : 'none';
+  });
+  var tabs = document.querySelectorAll('#rt .tab');
+  var keys = ['acct','posts','spy'];
+  tabs.forEach(function(el, i) {
+    el.className = 'tab' + (keys[i] === t ? ' on-b' : '');
+  });
+}
+
+function ctab(t) {
+  ['gen','prof','sched'].forEach(function(x) {
+    document.getElementById('c-' + x).style.display = x === t ? 'block' : 'none';
+  });
+  var tabs = document.querySelectorAll('#ct .tab');
+  var keys = ['gen','prof','sched'];
+  tabs.forEach(function(el, i) {
+    el.className = 'tab' + (keys[i] === t ? ' on-g' : '');
+  });
+}
+
+function mtab(t) {
+  ['line','affil','sim'].forEach(function(x) {
+    document.getElementById('m-' + x).style.display = x === t ? 'block' : 'none';
+  });
+  var tabs = document.querySelectorAll('#mt .tab');
+  var keys = ['line','affil','sim'];
+  tabs.forEach(function(el, i) {
+    el.className = 'tab' + (keys[i] === t ? ' on-o' : '');
+  });
+}
+
+// ============================================================
+// TAG GROUPS
+// ============================================================
+function initTags() {
+  var groups = ['tg-acct','tg-post','tg-gen','tg-line'];
+  groups.forEach(function(gid) {
+    var g = document.getElementById(gid);
+    if (!g) return;
+    var items = g.querySelectorAll('.tgi');
+    items.forEach(function(item) {
+      item.addEventListener('click', function() {
+        items.forEach(function(i) { i.className = 'tgi'; });
+        var cls = gid === 'tg-acct' ? 'ao' : gid === 'tg-post' ? 'ab' : gid === 'tg-gen' ? 'ag' : 'ag';
+        item.className = 'tgi ' + cls;
+      });
     });
+  });
+}
 
-    // ============================================================
-    // API CALL (iPhone Safari対応版)
-    // ============================================================
-    async function callClaude(key, prompt, cb) {
-        try {
-            const response = await fetch('https://api.anthropic.com/v1/messages', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': key,
-                    'anthropic-version': '2023-06-01',
-                    // ブラウザからの直接アクセスを許可する必須ヘッダー
-                    'anthropic-dangerous-direct-browser-access': 'true'
-                },
-                body: JSON.stringify({
-                    model: 'claude-3-5-haiku-20241022', // 正しいモデル名
-                    max_tokens: 1500,
-                    system: 'あなたはSNSマーケティングの専門家です。簡潔に、具体的な戦略を提案してください。',
-                    messages: [{ role: 'user', content: prompt }]
-                })
-            });
+function getTag(gid) {
+  var el = document.querySelector('#' + gid + ' .tgi.ao, #' + gid + ' .tgi.ab, #' + gid + ' .tgi.ag');
+  return el ? el.getAttribute('data-v') : '';
+}
 
-            const data = await response.json();
+// ============================================================
+// API CALL
+// ============================================================
+function callClaude(prompt, cb) {
+  if (!apiKey) { cb(new Error('APIキーを上の入力欄に入力してください'), null); return; }
 
-            if (!response.ok) {
-                const errorMsg = data.error ? data.error.message : `HTTP ${response.status}`;
-                cb(new Error(errorMsg), null);
-                return;
-            }
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', 'https://api.anthropic.com/v1/messages', true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('x-api-key', apiKey);
+  xhr.setRequestHeader('anthropic-version', '2023-06-01');
+  xhr.setRequestHeader('anthropic-dangerous-direct-browser-access', 'true');
 
-            // テキストコンテンツの抽出
-            const text = data.content
-                .filter(item => item.type === 'text')
-                .map(item => item.text)
-                .join('');
-
-            cb(null, text);
-
-        } catch (e) {
-            console.error(e);
-            cb(new Error('通信が遮断されました。iPhoneのSafariでローカルファイルを開くと、セキュリティ制限により通信が失敗することがあります。Vercel等のWebサーバーにアップロードするか、PCでお試しください。'), null);
+  xhr.onload = function() {
+    try {
+      var data = JSON.parse(xhr.responseText);
+      if (xhr.status !== 200) {
+        cb(new Error(data.error ? data.error.message : 'HTTP ' + xhr.status), null);
+        return;
+      }
+      var text = '';
+      if (data.content && data.content.length > 0) {
+        for (var i = 0; i < data.content.length; i++) {
+          if (data.content[i].type === 'text') {
+            text += data.content[i].text;
+          }
         }
+      }
+      if (!text) { cb(new Error('レスポンスが空でした。再試行してください。'), null); return; }
+      cb(null, text);
+    } catch (e) {
+      cb(new Error('レスポンス解析エラー: ' + e.message), null);
     }
+  };
+
+  xhr.onerror = function() { cb(new Error('ネットワークエラー。インターネット接続を確認してください。'), null); };
+  xhr.ontimeout = function() { cb(new Error('タイムアウト。再試行してください。'), null); };
+  xhr.timeout = 60000;
+
+  var body = {
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: 2000,
+    system: 'あなたはXのSNSマーケティング専門家です。必ずJSONオブジェクトのみで回答してください。説明文・マークダウン・コードブロック記号は一切不要です。',
+    messages: [{ role: 'user', content: prompt }]
+  };
+
+  xhr.send(JSON.stringify(body));
+}
+
+// ============================================================
+// JSON PARSER
+// ============================================================
+function parseJSON(raw) {
+  var s = raw.indexOf('{');
+  var e = raw.lastIndexOf('}');
+  if (s < 0 || e < 0) throw new Error('JSONが見つかりません。再試行してください。');
+  return JSON.parse(raw.slice(s, e + 1));
+}
+
+// ============================================================
+// UI HELPERS
+// ============================================================
+function setBusy(k, on) {
+  var ld = document.getElementById('ld-' + k);
+  var btn = document.getElementById('btn-' + k);
+  if (ld) ld.className = 'ld' + (on ? ' on' : '');
+  if (btn) btn.disabled = on;
+}
+
+function setErr(k, msg) {
+  var el = document.getElementById('er-' + k);
+  if (!el) return;
+  el.textContent = msg || '';
+  el.className = 'eb' + (msg ? ' on' : '');
+}
+
+function cpTxt(txt, btn) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt).then(function() {
+      var o = btn.textContent; btn.textContent = '✅ コピー完了';
+      setTimeout(function() { btn.textContent = o; }, 2000);
+    });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = txt; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    var o = btn.textContent; btn.textContent = '✅ コピー完了';
+    setTimeout(function() { btn.textContent = o; }, 2000);
+  }
+}
+
+// ============================================================
+// ACCOUNTS
+// ============================================================
+function runAccounts() {
+  var custom = document.getElementById('acct-custom').value.trim();
+  var genre = custom || getTag('tg-acct') || 'AI・ChatGPT活用';
+  var count = document.getElementById('acct-count').value;
+
+  setBusy('acct', true); setErr('acct', '');
+  document.getElementById('res-acct').innerHTML = '';
+
+  var prompt = genre + 'ジャンルで直近3ヶ月にフォロワーが急増しているXアカウントを' + count + '個リサーチしてください。\n' +
+    '以下のJSONのみ回答:\n' +
+    '{"summary":"共通戦略200字","accounts":[{"name":"表示名","handle":"@handle","initial":"頭文字1文字","followers":"フォロワー数","growth":"成長","growthLevel":"high or normal","description":"コンセプト60字","postFreq":"投稿頻度","engRate":"エンゲージ","strategy":"真似すべき戦略80字"}]}';
+
+  callClaude(prompt, function(err, raw) {
+    setBusy('acct', false);
+    if (err) { setErr('acct', err.message); return; }
+    try {
+      var d = parseJSON(raw);
+      var html = '<div class="sum"><div class="sum-k">STRATEGY SUMMARY</div><div class="sum-t">' + d.summary + '</div></div>';
+      d.accounts.forEach(function(a) {
+        html += '<div class="rc">' +
+          '<div class="act"><div class="av">' + (a.initial || a.name[0]) + '</div>' +
+          '<div style="flex:1"><div class="an">' + a.name + '</div><div class="ah">' + a.handle + '</div></div>' +
+          '<div class="pill ' + (a.growthLevel === 'high' ? 'pill-r' : 'pill-y') + '">' + a.growth + '</div></div>' +
+          '<div class="ad">' + a.description + '</div>' +
+          '<div class="am"><div class="av2"><div class="av2-v">' + a.followers + '</div><div class="av2-k">フォロワー</div></div>' +
+          '<div class="av2"><div class="av2-v">' + a.postFreq + '</div><div class="av2-k">頻度</div></div>' +
+          '<div class="av2"><div class="av2-v">' + a.engRate + '</div><div class="av2-k">ENG</div></div></div>' +
+          '<div class="at"><b>真似すべき戦略</b><p>' + a.strategy + '</p></div></div>';
+      });
+      document.getElementById('res-acct').innerHTML = html;
+    } catch(e) { setErr('acct', 'JSON解析エラー: ' + e.message + '\n\n生データ: ' + raw.substring(0, 300)); }
+  });
+}
+
+// ============================================================
+// POSTS
+// ============================================================
+function runPosts() {
+  var topic = document.getElementById('post-topic').value.trim() || 'AI副業';
+  var period = document.getElementById('post-period').value;
+  var type = getTag('tg-post') || 'スレッド・まとめ系';
+
+  setBusy('posts', true); setErr('posts', '');
+  document.getElementById('res-posts').innerHTML = '';
+
+  var prompt = topic + 'テーマで' + period + 'に' + type + 'として注目された投稿パターンをリサーチしてください。\n' +
+    '以下のJSONのみ回答:\n' +
+    '{"summary":"共通パターン200字","posts":[{"rank":1,"title":"一言","author":"@account","postType":"thread or single or poll","hook":"冒頭フック40字","likes":"いいね数","retweets":"リポスト数","impressions":"インプレ","whyBuzz":"理由80字","template":"真似テンプレ120字"}]}';
+
+  callClaude(prompt, function(err, raw) {
+    setBusy('posts', false);
+    if (err) { setErr('posts', err.message); return; }
+    try {
+      var d = parseJSON(raw);
+      var tl = { thread:'スレッド', single:'単発', poll:'アンケート' };
+      var html = '<div class="sum"><div class="sum-k">BUZZ ANALYSIS</div><div class="sum-t">' + d.summary + '</div></div>';
+      d.posts.forEach(function(p) {
+        var typeStr = tl[p.postType] || p.postType;
+        var bdgCls = p.postType === 'thread' ? 'bdg-t' : p.postType === 'poll' ? 'bdg-p' : 'bdg-s';
+        html += '<div class="rc">' +
+          '<div class="pt"><div class="pn">' + String(p.rank).padStart(2,'0') + '</div>' +
+          '<div style="flex:1"><div class="pt-t">' + p.title + '</div><div class="pt-b">' + p.author + '</div></div>' +
+          '<div class="bdg ' + bdgCls + '">' + typeStr + '</div></div>' +
+          '<div class="hk">' + p.hook + '</div>' +
+          '<div class="ps"><div class="ps-i">❤️ ' + p.likes + '</div><div class="ps-i">🔁 ' + p.retweets + '</div><div class="ps-i">👁 ' + p.impressions + '</div></div>' +
+          '<div class="pb"><div class="mb mb-g"><div class="mb-k">バズった理由</div><p>' + p.whyBuzz + '</p></div>' +
+          '<div class="mb mb-o"><div class="mb-k">真似テンプレ</div><p>' + p.template + '</p></div></div></div>';
+      });
+      document.getElementById('res-posts').innerHTML = html;
+    } catch(e) { setErr('posts', 'JSON解析エラー: ' + e.message + '\n\n生データ: ' + raw.substring(0, 300)); }
+  });
+}
+
+// ============================================================
+// SPY
+// ============================================================
+function runSpy() {
+  var acct = document.getElementById('spy-acct').value.trim();
+  var period = document.getElementById('spy-period').value;
+  if (!acct) { setErr('spy', 'アカウント名を入力してください'); return; }
+
+  setBusy('spy', true); setErr('spy', '');
+  document.getElementById('res-spy').innerHTML = '';
+
+  var prompt = 'Xアカウント「' + acct + '」の' + period + 'の投稿パターンを分析してください。\n' +
+    '以下のJSONのみ回答:\n' +
+    '{"overview":"概要100字","patterns":[{"week":"パターン名","title":"代表的なバズパターン","avgLikes":"平均いいね","avgImpression":"平均インプレ","insight":"伸びた理由100字","copyTip":"真似できるアイデア60字"}],"postingStrategy":"投稿戦略まとめ150字","stealThis":"今すぐ真似すべきこと3つ（1.2.3.の形式）"}';
+
+  callClaude(prompt, function(err, raw) {
+    setBusy('spy', false);
+    if (err) { setErr('spy', err.message); return; }
+    try {
+      var d = parseJSON(raw);
+      var html = '<div class="sum"><div class="sum-k">ACCOUNT OVERVIEW</div><div class="sum-t">' + d.overview + '</div></div>';
+      d.patterns.forEach(function(p) {
+        html += '<div class="spy-c"><div class="spy-w">' + p.week + '</div><div class="spy-t">' + p.title + '</div>' +
+          '<div class="spy-m"><div class="spy-s">❤️ 平均 <b>' + p.avgLikes + '</b></div><div class="spy-s">👁 <b>' + p.avgImpression + '</b></div></div>' +
+          '<div class="spy-in">' + p.insight + '</div><div class="spy-cp">💡 ' + p.copyTip + '</div></div>';
+      });
+      html += '<div class="card"><div class="card-t">📋 投稿戦略まとめ</div><p style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:12px">' + d.postingStrategy + '</p>' +
+        '<p style="font-size:13px;color:var(--gr);line-height:2">' + d.stealThis + '</p></div>';
+      document.getElementById('res-spy').innerHTML = html;
+    } catch(e) { setErr('spy', 'JSON解析エラー: ' + e.message + '\n\n生データ: ' + raw.substring(0, 300)); }
+  });
+}
+
+// ============================================================
+// GENERATOR
+// ============================================================
+function runGenerator() {
+  var theme = document.getElementById('gen-theme').value.trim();
+  var persona = document.getElementById('gen-persona').value.trim() || 'Xユーザー';
+  var style = getTag('tg-gen') || '有益情報まとめ型';
+  var lineCTA = document.getElementById('gen-line').value;
+  if (!theme) { setErr('gen', 'テーマを入力してください'); return; }
+
+  setBusy('gen', true); setErr('gen', '');
+  document.getElementById('res-gen').innerHTML = '';
+
+  var lineInst = lineCTA ? '\n各投稿の最後に「' + lineCTA + '」を自然に追加すること。' : '';
+
+  var prompt = 'X投稿を4パターン生成してください。テーマ:' + theme + ' 立場:' + persona + ' スタイル:' + style + lineInst + '\n' +
+    '各投稿は実際に投稿できる完成形（140〜280文字、改行・絵文字活用）。\n' +
+    '以下のJSONのみ回答:\n' +
+    '{"insight":"このテーマで伸びるワンポイント80字","variations":[{"type":"hook","label":"フック型","post":"投稿文全文"},{"type":"edu","label":"教育型","post":"投稿文全文"},{"type":"story","label":"ストーリー型","post":"投稿文全文"},{"type":"cta","label":"CTA型","post":"投稿文全文"}]}';
+
+  callClaude(prompt, function(err, raw) {
+    setBusy('gen', false);
+    if (err) { setErr('gen', err.message); return; }
+    try {
+      var d = parseJSON(raw);
+      var colors = { hook:'var(--or)', edu:'var(--bl)', story:'var(--ye)', cta:'var(--gr)' };
+      var html = '<div class="sum"><div class="sum-k">INSIGHT</div><div class="sum-t">' + d.insight + '</div></div>';
+      d.variations.forEach(function(v) {
+        var color = colors[v.type] || 'var(--t1)';
+        var emo = { hook:'🎣', edu:'📚', story:'📖', cta:'🎯' };
+        html += '<div class="gc"><div class="gc-h"><span class="gc-l" style="color:' + color + '">' + (emo[v.type]||'') + ' ' + v.label + '</span>' +
+          '<button class="btn-g" id="cp-' + v.type + '">📋 コピー</button></div>' +
+          '<div class="gc-b" id="gb-' + v.type + '">' + v.post + '</div></div>';
+      });
+      document.getElementById('res-gen').innerHTML = html;
+      d.variations.forEach(function(v) {
+        var btn = document.getElementById('cp-' + v.type);
+        var post = v.post;
+        if (btn) btn.onclick = function() { cpTxt(post, btn); };
+      });
+    } catch(e) { setErr('gen', 'JSON解析エラー: ' + e.message + '\n\n生データ: ' + raw.substring(0, 300)); }
+  });
+}
+
+// ============================================================
+// PROFILE
+// ============================================================
+function runProfile() {
+  var genre = document.getElementById('prof-genre').value.trim() || 'AI副業';
+  var career = document.getElementById('prof-career').value.trim() || 'エンジニア';
+  var target = document.getElementById('prof-target').value.trim() || 'サラリーマン';
+  var gift = document.getElementById('prof-gift').value.trim() || '';
+
+  setBusy('prof', true); setErr('prof', '');
+  document.getElementById('res-prof').innerHTML = '';
+
+  var prompt = 'フォロワーが増えるXプロフィールを設計してください。ジャンル:' + genre + ' 実績:' + career + ' ターゲット:' + target + ' LINE特典:' + gift + '\n' +
+    '以下のJSONのみ回答:\n' +
+    '{"name":"表示名案","bio":"プロフ文（140文字以内・改行あり）","pinPost":"固定投稿の自己紹介ツイート全文","link":"プロフリンクに設定すべきもの","headerConcept":"ヘッダー画像コンセプト","analysis":"このプロフが刺さる理由100字"}';
+
+  callClaude(prompt, function(err, raw) {
+    setBusy('prof', false);
+    if (err) { setErr('prof', err.message); return; }
+    try {
+      var d = parseJSON(raw);
+      var bioId = 'prof-bio-' + Date.now();
+      var pinId = 'prof-pin-' + Date.now();
+      var html = '<div class="rc">' +
+        '<div class="pr-s"><div class="pr-l">表示名（案）</div><div class="pr-v" style="font-size:20px;font-weight:800">' + d.name + '</div></div>' +
+        '<div class="pr-s"><div class="pr-l">プロフィール文</div><div class="pr-v" id="' + bioId + '">' + d.bio + '</div>' +
+        '<button class="btn-g" style="margin-top:10px" id="btn-bio">📋 コピー</button></div>' +
+        '<div class="pr-s"><div class="pr-l">固定投稿（自己紹介）</div><div class="pr-v" id="' + pinId + '">' + d.pinPost + '</div>' +
+        '<button class="btn-g" style="margin-top:10px" id="btn-pin">📋 コピー</button></div>' +
+        '<div class="pr-s"><div class="pr-l">プロフリンク</div><div class="pr-v">' + d.link + '</div></div>' +
+        '<div class="pr-s"><div class="pr-l">ヘッダー画像コンセプト</div><div class="pr-v">' + d.headerConcept + '</div></div>' +
+        '<div class="pr-s"><div class="pr-l">なぜ刺さるか</div><div class="pr-v" style="color:var(--gr)">' + d.analysis + '</div></div></div>';
+      document.getElementById('res-prof').innerHTML = html;
+      var bio = d.bio; var pin = d.pinPost;
+      document.getElementById('btn-bio').onclick = function() { cpTxt(bio, this); };
+      document.getElementById('btn-pin').onclick = function() { cpTxt(pin, this); };
+    } catch(e) { setErr('prof', 'JSON解析エラー: ' + e.message + '\n\n生データ: ' + raw.substring(0, 300)); }
+  });
+}
+
+// ============================================================
+// SCHEDULE
+// ============================================================
+function runSchedule() {
+  var genre = document.getElementById('sched-genre').value.trim() || 'AI副業';
+  var cnt = document.getElementById('sched-cnt').value;
+
+  setBusy('sched', true); setErr('sched', '');
+  document.getElementById('res-sched').innerHTML = '';
+
+  var prompt = genre + 'ジャンルのX投稿で最もエンゲージが高い曜日・時間帯を分析し、1日' + cnt + '本の最適週間スケジュールを設計してください。\n' +
+    '以下のJSONのみ回答:\n' +
+    '{"analysis":"エンゲージ傾向150字","schedule":{"月":{"slots":["07:30"],"types":["有益まとめ"]},"火":{"slots":["07:30"],"types":["有益まとめ"]},"水":{"slots":["07:30"],"types":["有益まとめ"]},"木":{"slots":["07:30"],"types":["有益まとめ"]},"金":{"slots":["07:30"],"types":["バズ狙い"]},"土":{"slots":["09:00"],"types":["エンタメ"]},"日":{"slots":["09:00"],"types":["まとめ"]}},"hotTimes":"エンゲージが高い時間帯TOP3","contentMix":"曜日別コンテンツ戦略100字"}';
+
+  callClaude(prompt, function(err, raw) {
+    setBusy('sched', false);
+    if (err) { setErr('sched', err.message); return; }
+    try {
+      var d = parseJSON(raw);
+      var days = ['月','火','水','木','金','土','日'];
+      var html = '<div class="sum"><div class="sum-k">SCHEDULE ANALYSIS</div><div class="sum-t">' + d.analysis + '</div></div>';
+      days.forEach(function(day) {
+        var info = d.schedule[day] || { slots:[], types:[] };
+        var slots = '';
+        info.slots.forEach(function(s, i) {
+          slots += '<div class="sc-s">' + s + ' ' + ((info.types && info.types[i]) ? info.types[i].substring(0,6) : '') + '</div>';
+        });
+        html += '<div class="sc-d"><div class="sc-dn"><span>' + day + '曜日</span><span class="sc-cnt">' + info.slots.length + '本</span></div>' +
+          '<div class="sc-sl">' + (slots || '<span style="font-size:12px;color:var(--t3)">投稿なし</span>') + '</div></div>';
+      });
+      html += '<div class="card"><div class="card-t">⚡ ポイント</div>' +
+        '<p style="font-size:13px;color:var(--ye);margin-bottom:8px">🔥 ホットタイム: ' + d.hotTimes + '</p>' +
+        '<p style="font-size:13px;color:var(--t2);line-height:1.7">' + d.contentMix + '</p></div>';
+      document.getElementById('res-sched').innerHTML = html;
+    } catch(e) { setErr('sched', 'JSON解析エラー: ' + e.message + '\n\n生データ: ' + raw.substring(0, 300)); }
+  });
+}
+
+// ============================================================
+// LINE
+// ============================================================
+function runLine() {
+  var genre = document.getElementById('line-genre').value.trim() || 'AI副業';
+  var product = document.getElementById('line-product').value.trim() || 'オンライン講座';
+  var gift = getTag('tg-line') || '無料PDF';
+
+  setBusy('line', true); setErr('line', '');
+  document.getElementById('res-line').innerHTML = '';
+
+  var prompt = genre + 'ジャンルのXからLINEへ誘導し「' + product + '」を販売するシナリオを設計してください。特典:' + gift + '\n' +
+    '以下のJSONのみ回答:\n' +
+    '{"overview":"シナリオ概要100字","steps":[{"step":"STEP 1","title":"X投稿でのLINE誘導","message":"LINE誘導文2パターン"},{"step":"STEP 2","title":"LINE登録直後の自動返信","message":"最初のメッセージ全文"},{"step":"STEP 3","title":"Day1 価値提供","message":"有益コンテンツメッセージ全文"},{"step":"STEP 4","title":"Day3 関係構築","message":"共感・ストーリーメッセージ全文"},{"step":"STEP 5","title":"Day5〜7 オファー","message":"セールスメッセージ全文"}]}';
+
+  callClaude(prompt, function(err, raw) {
+    setBusy('line', false);
+    if (err) { setErr('line', err.message); return; }
+    try {
+      var d = parseJSON(raw);
+      var html = '<div class="sum"><div class="sum-k">SCENARIO OVERVIEW</div><div class="sum-t">' + d.overview + '</div></div>';
+      d.steps.forEach(function(s, idx) {
+        var msgId = 'lmsg-' + idx;
+        var btnId = 'lbtn-' + idx;
+        html += '<div class="lc"><div class="lc-h"><div class="lc-s">' + s.step + '</div><div class="lc-t">' + s.title + '</div></div>' +
+          '<div class="lc-b" id="' + msgId + '">' + s.message + '</div>' +
+          '<div class="lc-f"><button class="btn-g" id="' + btnId + '">📋 コピー</button></div></div>';
+      });
+      document.getElementById('res-line').innerHTML = html;
+      d.steps.forEach(function(s, idx) {
+        var msg = s.message;
+        var btn = document.getElementById('lbtn-' + idx);
+        if (btn) btn.onclick = function() { cpTxt(msg, btn); };
+      });
+    } catch(e) { setErr('line', 'JSON解析エラー: ' + e.message + '\n\n生データ: ' + raw.substring(0, 300)); }
+  });
+}
+
+// ============================================================
+// AFFILIATE
+// ============================================================
+function runAffiliate() {
+  var target = document.getElementById('affil-target').value.trim() || '副業に興味があるサラリーマン';
+  var price = document.getElementById('affil-price').value;
+
+  setBusy('affil', true); setErr('affil', '');
+  document.getElementById('res-affil').innerHTML = '';
+
+  var prompt = 'X SNS経由でアフィリエイトで稼ぐ戦略を設計してください。ターゲット:' + target + ' 優先単価:' + price + '\n' +
+    '以下のJSONのみ回答:\n' +
+    '{"strategy":"全体戦略150字","monthlyProjection":"月収シミュレーション（具体的計算式）","genres":[{"genre":"ジャンル名","unitPrice":"報酬単価","yen":"想定月収","products":[{"name":"商材名","commission":"報酬"},{"name":"商材2","commission":"報酬"},{"name":"商材3","commission":"報酬"}],"tip":"成約率を上げるコツ60字","asp":"登録すべきASP名"}],"actionPlan":"今すぐやるべき3ステップ（1.2.3.の形式）"}';
+
+  callClaude(prompt, function(err, raw) {
+    setBusy('affil', false);
+    if (err) { setErr('affil', err.message); return; }
+    try {
+      var d = parseJSON(raw);
+      var html = '<div class="sum"><div class="sum-k">STRATEGY</div><div class="sum-t">' + d.strategy + '</div></div>' +
+        '<div class="sum" style="border-left-color:var(--gr)"><div class="sum-k">MONTHLY PROJECTION</div><div class="sum-t">' + d.monthlyProjection + '</div></div>';
+      d.genres.forEach(function(g) {
+        var prods = g.products.map(function(p) { return '<li>' + p.name + '<span>' + p.commission + '</span></li>'; }).join('');
+        html += '<div class="afc"><div class="af-n">' + g.genre + '</div><div class="af-a">ASP: ' + g.asp + '</div>' +
+          '<div class="af-p">' + g.unitPrice + '</div><div class="af-i">想定: ' + g.yen + '</div>' +
+          '<ul class="af-l">' + prods + '</ul><div class="af-tip">💡 ' + g.tip + '</div></div>';
+      });
+      html += '<div class="card"><div class="card-t">🚀 アクションプラン</div><p style="font-size:14px;color:var(--t2);line-height:2.2">' + d.actionPlan + '</p></div>';
+      document.getElementById('res-affil').innerHTML = html;
+    } catch(e) { setErr('affil', 'JSON解析エラー: ' + e.message + '\n\n生データ: ' + raw.substring(0, 300)); }
+  });
+}
+
+// ============================================================
+// SIMULATOR
+// ============================================================
+function calcSim() {
+  var f = +document.getElementById('sl1').value;
+  var lr = +document.getElementById('sl2').value;
+  var cvr = +document.getElementById('sl3').value;
+  var price = +document.getElementById('sl4').value;
+  var nl = +document.getElementById('sl5').value;
+
+  document.getElementById('sv1').textContent = f.toLocaleString() + '人';
+  document.getElementById('sv2').textContent = lr + '%';
+  document.getElementById('sv3').textContent = cvr + '%';
+  document.getElementById('sv4').textContent = '¥' + price.toLocaleString();
+  document.getElementById('sv5').textContent = nl + '人';
+
+  var lineTotal = Math.floor(f * lr / 100);
+  var sales = Math.floor(nl * cvr / 100);
+  var monthly = sales * price;
+
+  var el = document.getElementById('sim-v');
+  el.innerHTML = '<span>¥</span>' + monthly.toLocaleString();
+  el.style.color = monthly >= 5000000 ? 'var(--or)' : monthly >= 1000000 ? 'var(--ye)' : 'var(--t1)';
+
+  document.getElementById('sim-i').textContent =
+    'フォロワー' + f.toLocaleString() + '人 → LINEリスト約' + lineTotal.toLocaleString() + '人\n' +
+    '月間新規' + nl + '人 × CVR' + cvr + '% = ' + sales + '件成約\n' +
+    sales + '件 × ¥' + price.toLocaleString() + ' = ¥' + monthly.toLocaleString() + '/月';
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.onload = function() {
+  initTags();
+  calcSim();
+};
 </script>
 
 </body>
 </html>
-
